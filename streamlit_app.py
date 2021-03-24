@@ -114,9 +114,11 @@ selected_df, latest_ROI = get_selected_ROI(selected_coins, roi_df)
 
 nearest = alt.selection(type='single', nearest=True, on='mouseover',
                         fields=['index'], empty='none')
+    
+date_formated = selected_date.strftime("%B %d, %Y")
 
 line = alt.Chart(selected_df).mark_line().encode(
-    alt.Y('value', title='ROI from March 13th, 2020', scale=alt.Scale(type='log', domain=(1,100))),
+    alt.Y('value', title='ROI from {}'.format(date_formated), scale=alt.Scale(type='log', domain=(1,100))),
     alt.X('index', title='Date'),
     color=alt.Color('variable', legend=alt.Legend(title=None, orient="top-left", fillColor='#EEEEEE', strokeColor='gray', cornerRadius=5, padding=5)))
     
@@ -182,7 +184,7 @@ qq.configure_view(
 col1, col2 = st.beta_columns([1, 2])
 
 col1.subheader("What's the ROI as of today?")
-col1.write("The chart to your right shows you the ROI for each coins as of the last close price.")
+col1.write("The chart to the right shows a comparison of each coin's ROI as of the last close price.")
 
 #col2.subheader('Chart')
 col2.altair_chart(qq, use_container_width=True)
