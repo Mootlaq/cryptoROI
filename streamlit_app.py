@@ -38,8 +38,9 @@ def get_history(coin, days):
     return df
 
 
-st.title("ROI since March 13, 2020!")
-st.text("Choose your coins from the list below and see how each performed since March 13, 2020!")
+st.title("Cryptocurrencies' ROI")
+st.markdown("Visualize the ROI of different cryptocurrencies from a certain date (the default date is March 13th, 2020.)")
+
 
 coins_list = ['bitcoin', 'chainlink', 'ethereum', 'cardano', 'vechain', 'ripple', 'litecoin', 
              'stellar', 'binancecoin', 'bitcoin-cash', 'eos', 'tron', 'dash', 'neo', 'tezos']
@@ -106,7 +107,6 @@ roi_df = calc_ROI(main_df, selected_date, selected_coins)
 selected_df, latest_ROI = get_selected_ROI(selected_coins, roi_df)
 #st.write(latest_ROI)
 #st.dataframe(selected_df)
-st.dataframe(roi_df)
 ################### Chart ###################
 
 nearest = alt.selection(type='single', nearest=True, on='mouseover',
@@ -184,13 +184,16 @@ col1.write("The chart to your right shows you the ROI for each coins as of the l
 #col2.subheader('Chart')
 col2.altair_chart(qq, use_container_width=True)
 
-
-
+#df_button = st.button("Show me the data")
+with st.beta_expander("Show me the data..."):
+    st.dataframe(roi_df)
+# if df_button:
+#     st.dataframe(roi_df)
 
 
 with st.beta_expander("About this website..."):
     st.markdown('''
-                This simple tool helps you see the ROI of your favorite coins.
+                This simple tool helps you see the ROI of your favorite coins from a certain date.
                 I made sure I made the charts interactive so make sure you take advantage of that.
                 If you have any feedback I would love to know! you can contact me on Telegram [here](https://t.me/motlaaq).
                 If you like what you see, you can always [buy me a coffee](https://www.buymeacoffee.com/Motlaq)! 
