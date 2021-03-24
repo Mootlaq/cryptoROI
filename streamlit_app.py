@@ -9,7 +9,7 @@ import datetime
 import time
 import altair as alt
 from altair.expr import datum, if_
-from datetime import date
+from datetime import date, datetime, timedelta
 
 
 cg = CoinGeckoAPI()
@@ -40,16 +40,17 @@ def get_history(coin, days):
 
 st.title("ROI since March 13, 2020!")
 st.text("Choose your coins from the list below and see how each performed since March 13, 2020!")
+
 coins_list = ['bitcoin', 'chainlink', 'ethereum', 'cardano', 'vechain', 'ripple', 'litecoin', 
-             'stellar', 'monero', 'cosmos', 'binancecoin', 'bitcoin-cash']
+             'stellar', 'binancecoin', 'bitcoin-cash', 'eos', 'tron', 'dash', 'neo', 'tezos']
 
 default_coins_list = ['bitcoin', 'ethereum', 'cardano', 'ripple', 'litecoin']
 
 selected_coins = st.multiselect('Coins', coins_list, default_coins_list)
+selected_date = st.date_input("Choose a date", date(2020,3,13), date(2019,1,1))
 
-@st.cache
-def get_roi(coins_list):
-    from_date = date(2020,3,13)
+def get_roi(coins_list): # This func creates the main first df.
+    from_date = date(2019,1,1)
     to_date = date.today()
     days_range = to_date - from_date
 
@@ -65,13 +66,25 @@ def get_roi(coins_list):
         if coin != 'bitcoin':
             coin_df = get_history(coin, days_range)
             df['{} Price'.format(coin.capitalize())] = list(coin_df['price'])
-        price_at13March = float(df.loc[df.index == '2020-03-13', '{} Price'.format(coin.capitalize())])
-        df['{} ROI'.format(coin.capitalize())] = df['{} Price'.format(coin.capitalize())] / price_at13March
-        df['{} ROI'.format(coin.capitalize())] = df['{} ROI'.format(coin.capitalize())].round(4)
+        #price_at13March = float(df.loc[df.index == '2019-01-01', '{} Price'.format(coin.capitalize())])
+        # df['{} ROI'.format(coin.capitalize())] = df['{} Price'.format(coin.capitalize())] / price_at13March
+        # df['{} ROI'.format(coin.capitalize())] = df['{} ROI'.format(coin.capitalize())].round(4)
 
     return df
 
-@st.cache
+def calc_ROI(df, selected_date, selected_coins): # This func calculates roi based on date and coins.
+    df = df[df.index >= str(selected_date)]
+    for coin in selected_coins:
+        normalized_price = float(df.loc[df.index == str(selected_date), '{} Price'.format(coin.capitalize())])
+        df['{} ROI'.format(coin.capitalize())] = df['{} Price'.format(coin.capitalize())] / normalized_price
+        df['{} ROI'.format(coin.capitalize())] = df['{} ROI'.format(coin.capitalize())].round(4)
+    return df
+
+
+# from_date = date(2020,3,13)
+# st.write(str(from_date))
+
+
 def get_selected_ROI(selected_coins, df):
     ROI_columns = ['{} ROI'.format(coin.capitalize()) for coin in selected_coins]
     ROI_df = df[ROI_columns]
@@ -83,11 +96,17 @@ def get_selected_ROI(selected_coins, df):
 
     return final_df, latest_ROI_df
 
-roi_df = get_roi(coins_list)
+
+#df = get_roi(coins_list)
+#a = df.loc[df.index==selected_date:df.index==df.index[-1],:]
+#st.write(a)
+
+main_df = get_roi(coins_list)
+roi_df = calc_ROI(main_df, selected_date, selected_coins)
 selected_df, latest_ROI = get_selected_ROI(selected_coins, roi_df)
 #st.write(latest_ROI)
 #st.dataframe(selected_df)
-
+st.dataframe(roi_df)
 ################### Chart ###################
 
 nearest = alt.selection(type='single', nearest=True, on='mouseover',
