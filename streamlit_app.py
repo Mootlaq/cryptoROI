@@ -20,7 +20,7 @@ def get_price(coin):
     return price_dict[coin]['usd']
 
 
-@st.cache
+@st.cache(show_spinner=False)
 def get_history(coin, days):
     coin_history = cg.get_coin_market_chart_by_id(id=coin, vs_currency='usd', days=days)
 
@@ -50,6 +50,7 @@ default_coins_list = ['bitcoin', 'ethereum', 'cardano', 'ripple', 'litecoin']
 selected_coins = st.multiselect('Coins', coins_list, default_coins_list)
 selected_date = st.date_input("Choose a date", date(2020,3,13), date(2019,1,1))
 
+@st.cache(show_spinner=False)
 def get_roi(coins_list): # This func creates the main first df.
     from_date = date(2019,1,1)
     to_date = date.today()
@@ -65,6 +66,8 @@ def get_roi(coins_list): # This func creates the main first df.
 
     for coin in coins_list:
         if coin != 'bitcoin':
+
+#            with st.spinner(text="Fetching measures"):
             coin_df = get_history(coin, days_range)
             df['{} Price'.format(coin.capitalize())] = list(coin_df['price'])
         #price_at13March = float(df.loc[df.index == '2019-01-01', '{} Price'.format(coin.capitalize())])
