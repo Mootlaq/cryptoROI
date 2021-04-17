@@ -43,7 +43,7 @@ st.markdown("Visualize the ROI of different cryptocurrencies from a certain date
 
 
 coins_list = ['bitcoin', 'chainlink', 'ethereum', 'cardano', 'vechain', 'ripple', 'litecoin', 
-             'stellar', 'binancecoin', 'bitcoin-cash', 'eos', 'tron', 'dash', 'neo', 'tezos']
+             'stellar', 'binancecoin', 'bitcoin-cash', 'eos', 'tron', 'dash', 'neo', 'tezos', 'dogecoin']
 
 default_coins_list = ['bitcoin', 'ethereum', 'cardano', 'ripple', 'litecoin']
 
