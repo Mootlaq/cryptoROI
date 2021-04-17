@@ -50,7 +50,7 @@ default_coins_list = ['bitcoin', 'ethereum', 'cardano', 'ripple', 'litecoin']
 selected_coins = st.multiselect('Coins', coins_list, default_coins_list)
 selected_date = st.date_input("Choose a date", date(2020,3,13), date(2019,1,1))
 
-@st.cache(show_spinner=False)
+#@st.cache(show_spinner=False)
 def get_roi(coins_list): # This func creates the main first df.
     from_date = date(2019,1,1)
     to_date = date.today()
@@ -69,7 +69,11 @@ def get_roi(coins_list): # This func creates the main first df.
 
 #            with st.spinner(text="Fetching measures"):
             coin_df = get_history(coin, days_range)
-            df['{} Price'.format(coin.capitalize())] = list(coin_df['price'])
+            # print(coin)
+            # st.text(coin)
+            # st.text(len(coin_df))
+            # print(len(coin_df))
+            df['{} Price'.format(coin.capitalize())] = pd.Series(coin_df['price'])
         #price_at13March = float(df.loc[df.index == '2019-01-01', '{} Price'.format(coin.capitalize())])
         # df['{} ROI'.format(coin.capitalize())] = df['{} Price'.format(coin.capitalize())] / price_at13March
         # df['{} ROI'.format(coin.capitalize())] = df['{} ROI'.format(coin.capitalize())].round(4)
@@ -109,7 +113,8 @@ main_df = get_roi(coins_list)
 roi_df = calc_ROI(main_df, selected_date, selected_coins)
 selected_df, latest_ROI = get_selected_ROI(selected_coins, roi_df)
 #st.write(latest_ROI)
-#st.dataframe(selected_df)
+st.dataframe(selected_df)
+# st.table(selected_df)
 ################### Chart ###################
 
 nearest = alt.selection(type='single', nearest=True, on='mouseover',
@@ -117,8 +122,8 @@ nearest = alt.selection(type='single', nearest=True, on='mouseover',
     
 date_formated = selected_date.strftime("%B %d, %Y")
 
-line = alt.Chart(selected_df).mark_line().encode(
-    alt.Y('value', title='ROI from {}'.format(date_formated), scale=alt.Scale(type='log', domain=(1,100))),
+line = alt.Chart(selected_df, title='ROI from {}'.format(date_formated)).mark_line().encode(
+    alt.Y('value', title='ROI (x)', scale=alt.Scale(type='log', domain=(1,100))),
     alt.X('index', title='Date'),
     color=alt.Color('variable', legend=alt.Legend(title=None, orient="top-left", fillColor='#EEEEEE', strokeColor='gray', cornerRadius=5, padding=5)))
     
