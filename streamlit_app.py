@@ -113,7 +113,7 @@ main_df = get_roi(coins_list)
 roi_df = calc_ROI(main_df, selected_date, selected_coins)
 selected_df, latest_ROI = get_selected_ROI(selected_coins, roi_df)
 #st.write(latest_ROI)
-st.dataframe(selected_df)
+#st.dataframe(selected_df)
 # st.table(selected_df)
 ################### Chart ###################
 
